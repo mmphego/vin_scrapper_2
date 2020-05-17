@@ -89,3 +89,6 @@ for licence in $LICENCE_NUMBERS; do
   done;
 done;
 ```
+
+# Demo
+![Peek 2020-05-17 23-43](https://user-images.githubusercontent.com/7910856/82160844-57942900-9898-11ea-9109-1e6f96fd21ee.gif)
