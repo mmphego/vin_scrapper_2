@@ -396,8 +396,9 @@ def check_proxies(proxies):
             [response["origin"] in proxies for proxies in list(proxies.values())]
         )
     except Exception:
-        logger.warning(f"Failed to verify if using a proxy via URL: {url}")
-
+        msg = f"Failed to verify if using a proxy via URL: {url}"
+        logger.warning(msg)
+        SystemExit(msg)
 
 def get_vin_number(query_data: dict, useragent: str, proxies: dict, cloudflare=False):
     url = "https://www.vehiclehistory.com/graphql"
@@ -411,10 +412,10 @@ def get_vin_number(query_data: dict, useragent: str, proxies: dict, cloudflare=F
     if proxies:
         try:
             assert check_proxies(proxies)
-        except Exception:
-            logger.warning(
-                "Proxies provided invalid, therefore will not use proxy to access page"
-            )
+        except Exception as err:
+            msg = ("Proxies Error")
+            logger.exception(msg)
+            SystemExit(msg)
         else:
             logger.info(f"Accessing URL using proxy settings: {proxies!r}")
             session.proxies = proxies
@@ -433,9 +434,9 @@ def get_vin_number(query_data: dict, useragent: str, proxies: dict, cloudflare=F
         vin = data_dict["data"]["licensePlate"]["vin"]
         return json.dumps({"vin": vin}, indent=4, sort_keys=True)
     except Exception as err:
-        msg = f"Failed to retrieve graphQL query from {url} due to: {str(err)}"
+        msg = f"Failed to retrieve VIN number."
         logger.error(msg)
-        raise RuntimeError(msg)
+        SystemExit(msg)
 
 
 def arg_parser():
