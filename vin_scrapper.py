@@ -8,6 +8,9 @@ import requests
 from loguru import logger
 
 
+class ProxyError(Exception):
+    """Issues with the proxies authentication."""
+
 class ProxySettings:
     """
     Proxy contains information about proxy type and necessary proxy settings.
@@ -410,12 +413,10 @@ def get_vin_number(query_data: dict, useragent: str, proxies: dict, cloudflare=F
         session = requests.Session()
 
     if proxies:
-        try:
-            assert check_proxies(proxies)
-        except Exception as err:
-            msg = ("Proxies Error")
-            logger.exception(msg)
-            SystemExit(msg)
+        if not check_proxies(proxies):
+            msg = "Failed to authenticate the proxies."
+            logger.error(msg)
+            raise ProxyError(msg)
         else:
             logger.info(f"Accessing URL using proxy settings: {proxies!r}")
             session.proxies = proxies
